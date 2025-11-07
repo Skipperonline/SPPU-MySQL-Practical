@@ -1,3 +1,16 @@
+MongoDB - Aggregation and Indexing: Design and Develop MongoDB Queries using aggregation and 
+indexing with suitable example using MongoDB.
+Create collection student{ Rollno ,Name, Class, Div, Subject,Marks, Address}and enter 6 entries or 
+more. And perform the following:
+ 1. Find average of total marks in TOC.
+ 2. Find the number of students division wise.
+ 3. Find students of div B who scored min marks in DBMS.
+ 4. Find total sum of marks in SPOS of students staying pune
+ 5. Find the division wise count of students whose DBMS marks.
+ 6. Find the count of each city.
+ 7. Create the simple and compound Indexing on column.
+
+
 use collegeDB
 
 db.student.insertMany([
@@ -59,4 +72,5 @@ db.student.getIndexes()
 
 10 Delete Index
 db.student.dropIndex("Name_1")
+
 
