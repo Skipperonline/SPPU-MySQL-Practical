@@ -1,6 +1,17 @@
+4)MongoDB - Aggregation and Indexing: Design and Develop MongoDB Queries using aggregation and 
+indexing with suitable example using MongoDB.
+ Create collection student{ Rollno ,Name, Class, Div, Subject, Marks, Address} and enter 6 entries or 
+more. And perform the following:
+ 1. Find the maximum marks of student in DS who stay in the same city
+ 2. Calculates the average of given marks.
+ 3. Inserts the any value to an array in the resulting document.
+ 4. Create a simple and compound index on name and class.
+ 5. Delete index of name.
+ 6. Implement aggregation pipeline using pipeline operations(example : $sort, $ match ,$group etc in 
+single statement)
+
 use SITS
 
-Step 2: Create Collection and Insert Data
 db.student.insertMany([
   { Rollno: 1, Name: "Riya", Class: "TE", Div: "A", Subject: "DS", Marks: 85, Address: { city: "Pune", state: "MH" } },
   { Rollno: 2, Name: "Rohan", Class: "TE", Div: "A", Subject: "DBMS", Marks: 75, Address: { city: "Pune", state: "MH" } },
@@ -54,6 +65,7 @@ db.student.aggregate([
   { $group: { _id: "$Address.city", AvgMarks: { $avg: "$Marks" } } },
   { $sort: { AvgMarks: -1 } }
 ])
+
 
 
 
