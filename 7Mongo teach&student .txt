@@ -1,0 +1,90 @@
+use SITS
+
+
+db.Teachers.insertMany([
+  { Tname: "Riya", dno: 10, dname: "CSE", experience: 5, salary: 30000, date_of_joining: "2019-06-10" },
+  { Tname: "Amit", dno: 20, dname: "IT", experience: 8, salary: 35000, date_of_joining: "2018-04-15" },
+  { Tname: "Neha", dno: 10, dname: "CSE", experience: 4, salary: 25000, date_of_joining: "2020-01-10" },
+  { Tname: "Rohit", dno: 30, dname: "ENTC", experience: 6, salary: 20000, date_of_joining: "2021-05-12" },
+  { Tname: "Aditi", dno: 20, dname: "IT", experience: 10, salary: 40000, date_of_joining: "2017-03-25" }
+])
+
+
+
+
+db.Students.insertMany([
+  { Sname: "Karan", roll_no: 1, class: "TE" },
+  { Sname: "Riya", roll_no: 2, class: "BE" },
+  { Sname: "Aditi", roll_no: 3, class: "SE" }
+])
+
+
+(1) Department-wise Average Salary
+db.Teachers.aggregate([
+  { $group: { _id: "$dname", AvgSalary: { $avg: "$salary" } } }
+])
+
+
+(2) No. of Employees per Department
+db.Teachers.aggregate([
+  { $group: { _id: "$dname", EmployeeCount: { $sum: 1 } } }
+])
+
+
+
+(3) Departments with Total Salary ≥ 50000
+db.Teachers.aggregate([
+  { $group: { _id: "$dname", TotalSalary: { $sum: "$salary" } } },
+  { $match: { TotalSalary: { $gte: 50000 } } }
+])
+
+
+
+
+(4) Queries using Operators ($max, $min, $avg, $sum)
+Find Maximum Salary
+db.Teachers.aggregate([{ $group: { _id: null, MaxSalary: { $max: "$salary" } } }])
+
+
+Find Minimum Salary
+db.Teachers.aggregate([{ $group: { _id: null, MinSalary: { $min: "$salary" } } }])
+
+
+Find Total Salary
+db.Teachers.aggregate([{ $group: { _id: null, TotalSalary: { $sum: "$salary" } } }])
+
+
+Find Average Experience
+db.Teachers.aggregate([{ $group: { _id: null, AvgExperience: { $avg: "$experience" } } }])
+
+
+
+(5) Create a Unique Index
+db.Students.createIndex({ roll_no: 1 }, { unique: true })
+
+db.Students.getIndexes()
+
+
+(6) Create a Compound Index
+db.Teachers.createIndex({ dname: 1, salary: -1 })
+
+db.Teachers.getIndexes()
+
+
+
+
+(7) Show All Indexes
+db.Teachers.getIndexes()
+
+db.Students.getIndexes()
+
+
+(8) Delete Index
+db.Teachers.dropIndex("dname_1_salary_-1")
+
+
+
+
+
+
+

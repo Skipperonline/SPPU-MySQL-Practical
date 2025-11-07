@@ -1,0 +1,63 @@
+use SITS
+
+db.createCollection("student")
+
+db.student.insertMany([
+  { fname: "Riya", lname: "Patil", gender: "female", class: "TE A", grd_point: 32, age: 19, city: "Pune", state: "MH" },
+  { fname: "Riyansh", lname: "Mehta", gender: "male", class: "TE B", grd_point: 30, age: 19, city: "Mumbai", state: "MH" },
+  { fname: "Aditi", lname: "Sharma", gender: "female", class: "TE B", grd_point: 34, age: 20, city: "Nagpur", state: "MH" },
+  { fname: "Tina", lname: "Verma", gender: "female", class: "TE C", grd_point: 38, age: 21, city: "Bangalore", state: "KA" },
+  { fname: "Karan", lname: "Jadhav", gender: "male", class: "TE B", grd_point: 33, age: 20, city: "Solapur", state: "MH" },
+  { fname: "Sonu", lname: "Soniminde", gender: "male", class: "TE A", grd_point: 35, age: 22, city: "Kolhapur", state: "MH" },
+  { fname: "Evanshika", lname: "Pawar", gender: "female", class: "TE B", grd_point: 29, age: 17, city: "Pune", state: "MH" },
+  { fname: "Rohan", lname: "Nair", gender: "male", class: "TE C", grd_point: 40, age: 21, city: "Mysore", state: "KA" },
+  { fname: "Bhakti", lname: "Deshmukh", gender: "female", class: "TE A", grd_point: 36, age: 19, city: "Aurangabad", state: "MH" },
+  { fname: "Neha", lname: "Kadam", gender: "female", class: "TE B", grd_point: 31, age: 20, city: "Pune", state: "MH" }
+])
+
+Step 4: Find documents based on conditions
+gender = female OR (class = TE B AND grd_point ≥ 31)
+
+db.student.find({
+  $or: [
+    { gender: "female" },
+    { $and: [ { class: "TE B" }, { grd_point: { $gte: 31 } } ] }
+  ]
+}).pretty()
+
+
+Step 5: Update age to 20 where fname = "Riyansh"
+db.student.updateOne(
+  { fname: "Riyansh" },
+  { $set: { age: 20 } }
+)
+
+
+
+Step 6: Update or save city and state where lname = "Soniminde"
+db.student.updateOne(
+  { lname: "Soniminde" },
+  { $set: { city: "Nagpur", state: "MH" } },
+  { upsert: true }
+)
+
+
+Step 7: Delete all students belonging to state “KA”
+db.student.deleteMany({ state: "KA" })
+
+
+Step 8: Delete student where fname = "Evanshika" and age < 18
+db.student.deleteOne({
+  fname: "Evanshika",
+  age: { $lt: 18 }
+})
+
+
+Step 9: Statement with $nor and an arithmetic operator
+db.student.find({
+  $nor: [
+    { state: "MH" },
+    { grd_point: { $gt: 35 } }
+  ]
+})
+

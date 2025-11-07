@@ -1,0 +1,31 @@
+use SITS
+db.students.insertMany([
+  { name: "Riya", subject: "DBMS", marks: 88 },
+  { name: "Aditya", subject: "DBMS", marks: 73 },
+  { name: "Nina", subject: "DBMS", marks: 56 },
+  { name: "Karan", subject: "DBMS", marks: 31 },
+  { name: "Pooja", subject: "DBMS", marks: 68 },
+  { name: "Rohan", subject: "DBMS", marks: 95 }
+])
+
+var mapFunction = function() {
+  if (this.marks > 70) {
+    emit("Highscores", 1);
+  } else if (this.marks >= 40) {
+    emit("Average Scores", 1);
+  } else {
+    emit("Failed", 1);
+  }
+};
+
+var reduceFunction = function(key, values) {
+  return Array.sum(values);
+};
+
+db.students.mapReduce(
+  mapFunction,
+  reduceFunction,
+  { out: "Student_Marks_Report" }
+);
+
+db.Student_Marks_Report.find().pretty();

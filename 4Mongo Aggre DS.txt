@@ -1,0 +1,59 @@
+use SITS
+
+Step 2: Create Collection and Insert Data
+db.student.insertMany([
+  { Rollno: 1, Name: "Riya", Class: "TE", Div: "A", Subject: "DS", Marks: 85, Address: { city: "Pune", state: "MH" } },
+  { Rollno: 2, Name: "Rohan", Class: "TE", Div: "A", Subject: "DBMS", Marks: 75, Address: { city: "Pune", state: "MH" } },
+  { Rollno: 3, Name: "Karan", Class: "TE", Div: "B", Subject: "DS", Marks: 88, Address: { city: "Nagpur", state: "MH" } },
+  { Rollno: 4, Name: "Aditi", Class: "TE", Div: "B", Subject: "DS", Marks: 92, Address: { city: "Pune", state: "MH" } },
+  { Rollno: 5, Name: "Neha", Class: "TE", Div: "A", Subject: "OS", Marks: 69, Address: { city: "Mumbai", state: "MH" } },
+  { Rollno: 6, Name: "Riyansh", Class: "TE", Div: "C", Subject: "DS", Marks: 79, Address: { city: "Pune", state: "MH" } }
+])
+
+
+(1) Find maximum marks of students in DS who stay in the same city
+db.student.aggregate([
+  { $match: { Subject: "DS" } },
+  { $group: { _id: "$Address.city", MaxMarks: { $max: "$Marks" } } }
+])
+
+
+(2) Calculate average of all marks
+db.student.aggregate([
+  { $group: { _id: null, AvgMarks: { $avg: "$Marks" } } }
+])
+
+
+(3) Insert any value to an array in the resulting document
+db.student.updateOne(
+  { Name: "Riya" },
+  { $push: { remarks: "Excellent performance" } }
+)
+
+
+(4) Create a simple and compound index
+db.student.createIndex({ Name: 1 })
+
+Compound Index on Name and Class:
+db.student.createIndex({ Name: 1, Class: 1 })
+
+Check indexes:
+db.student.getIndexes()
+
+
+(5) Delete Index of Name
+db.student.dropIndex("Name_1")
+
+Check again:
+db.student.getIndexes()
+
+
+(6) Implement Aggregation Pipeline using multiple stage
+db.student.aggregate([
+  { $match: { Subject: "DS", "Address.city": "Pune" } },
+  { $group: { _id: "$Address.city", AvgMarks: { $avg: "$Marks" } } },
+  { $sort: { AvgMarks: -1 } }
+])
+
+
+

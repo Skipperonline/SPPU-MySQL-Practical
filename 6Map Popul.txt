@@ -1,0 +1,40 @@
+use population
+
+
+Step 2: Create and Insert Documents
+db.City.insertMany([
+  { cityname: "Pune", area: 450, population: 900000 },
+  { cityname: "Mumbai", area: 600, population: 2000000 },
+  { cityname: "Nagpur", area: 500, population: 800000 },
+  { cityname: "Bangalore", area: 700, population: 2500000 },
+  { cityname: "Nashik", area: 350, population: 600000 }
+])
+
+
+Step 3: Write the Map Function
+var mapFunction = function() {
+  if (this.population < 1000000) {
+    emit("LOW POPULATED", 1);
+  } else {
+    emit("HIGHLY POPULATED", 1);
+  }
+};
+
+
+Step 4: Write the Reduce Function
+var reduceFunction = function(key, values) {
+  return Array.sum(values);
+};
+
+
+
+Step 5: Run the MapReduce Operation
+db.City.mapReduce(
+  mapFunction,
+  reduceFunction,
+  { out: "City_Result" }
+)
+
+
+Step 6: Display the Result
+db.City_Result.find().pretty()
