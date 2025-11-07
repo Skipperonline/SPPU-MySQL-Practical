@@ -1,5 +1,17 @@
-use SITS
+7. Create Database SITS using MongoDB Create following Collections 
+Teachers(Tname,dno,dname,experience,salary,date_of_joining ) 
+Students(Sname,roll_no,class) 
+1. Display the department wise average salary 
+2. Display the no. Of employees working in each department 
+3. Display the department wise total salary of departments having total salary greater than or equals to 50000/- 
+4. Write the queries using the different operators like max, min. Etc. 
+5. Create unique index on any field for above given collections
+ 6. Create compound index on any fields for above given collections
+ 7. Show all the indexes created in the database SITS.
+ 8. Delete index.
 
+
+use SITS
 
 db.Teachers.insertMany([
   { Tname: "Riya", dno: 10, dname: "CSE", experience: 5, salary: 30000, date_of_joining: "2019-06-10" },
@@ -81,6 +93,7 @@ db.Students.getIndexes()
 
 (8) Delete Index
 db.Teachers.dropIndex("dname_1_salary_-1")
+
 
 
 
