@@ -1,7 +1,11 @@
+6) Create a collection City (cityname, area, population). Write a MapReduce function to find the number of  cities  
+having populationless than 10 Lakhs  and cities with poulation greater than 10 Lakhs  and categorize them into 
+categories HIGHLY POPULATED AND LOW POPULATED.
+
+
 use population
 
 
-Step 2: Create and Insert Documents
 db.City.insertMany([
   { cityname: "Pune", area: 450, population: 900000 },
   { cityname: "Mumbai", area: 600, population: 2000000 },
@@ -11,7 +15,7 @@ db.City.insertMany([
 ])
 
 
-Step 3: Write the Map Function
+Write the Map Function
 var mapFunction = function() {
   if (this.population < 1000000) {
     emit("LOW POPULATED", 1);
@@ -21,14 +25,14 @@ var mapFunction = function() {
 };
 
 
-Step 4: Write the Reduce Function
+Write the Reduce Function
 var reduceFunction = function(key, values) {
   return Array.sum(values);
 };
 
 
 
-Step 5: Run the MapReduce Operation
+Run the MapReduce Operation
 db.City.mapReduce(
   mapFunction,
   reduceFunction,
@@ -36,5 +40,6 @@ db.City.mapReduce(
 )
 
 
-Step 6: Display the Result
+Display the Result
 db.City_Result.find().pretty()
+
