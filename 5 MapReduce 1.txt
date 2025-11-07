@@ -1,4 +1,12 @@
+5)
+Write mapreduce function on students info collection to find the number of students who scored more than 70 
+marks in DBMS as “ Highscores”,less than 70 marks but greater than 40 marks as “Average scores” and less 
+than 40 marks as “Failed.
+ And also perform any other mapreduce fuction according to you.
+
+
 use SITS
+
 db.students.insertMany([
   { name: "Riya", subject: "DBMS", marks: 88 },
   { name: "Aditya", subject: "DBMS", marks: 73 },
@@ -29,3 +37,4 @@ db.students.mapReduce(
 );
 
 db.Student_Marks_Report.find().pretty();
+
