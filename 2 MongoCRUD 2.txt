@@ -1,3 +1,16 @@
+2) MongoDB Queries: Design and Develop MongoDB Queries using CRUD operations.
+ Create collection “student” and 
+1. Insert  entry of 10 or more students
+ 2. select all documents from the collection "student" which satisfying the following condition 
+a. gender of student is female or
+ b. Class of the student is TE B and
+ c. grd_point of the student is greater than equal to 31 with comparison operator. 
+3. Update age to 20 from collection “student” whose first name is “ Riyansh”
+ 4. Update or save the city to nagpur and State to MH whose last name is “soniminde”
+ 5. Students have cancelled admission from the college who is belongs to state “KA”.
+ 6. Delete the document from collection student where First name is Evanshika and age is less than 18.
+ 7. Make statement with nor and other arithmetic operator.
+
 use SITS
 
 db.createCollection("student")
@@ -60,4 +73,5 @@ db.student.find({
     { grd_point: { $gt: 35 } }
   ]
 })
+
 
