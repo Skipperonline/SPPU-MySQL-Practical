@@ -1,0 +1,92 @@
+--1. Borrower(Roll_no, Name, DateofIssue, NameofBook, Status)
+--2. Fine(Roll_no,Date,Amt)  Accept Roll_no and NameofBook from user.
+
+
+CREATE TABLE Borrower (
+    Roll_no INT PRIMARY KEY,
+    Name VARCHAR(50),
+    DateOfIssue DATE,
+    NameOfBook VARCHAR(50),
+    Status CHAR(1)   -- 'I' for Issued, 'R' for Returned
+);
+
+CREATE TABLE Fine (
+    Roll_no INT,
+    FineDate DATE,
+    Amt INT
+);
+
+
+INSERT INTO Borrower VALUES 
+(101, 'Rahul',  '2025-10-05', 'DBMS', 'I'),
+(102, 'Neha',   '2025-09-20', 'OS',   'I'),
+(103, 'Amit',   '2025-10-25', 'CN',   'I'),
+(104, 'Chetan', '2025-09-15', 'DSA',  'I');
+
+COMMIT;
+
+Create Stored Procedure
+
+DELIMITER $$
+
+CREATE PROCEDURE proc_Fine(IN p_roll INT, IN p_book VARCHAR(50))
+BEGIN
+    DECLARE v_date DATE;
+    DECLARE v_days INT;
+    DECLARE v_amt INT DEFAULT 0;
+    DECLARE v_not_found CONDITION FOR SQLSTATE '02000';  -- No record found
+
+    -- Exception handler
+    DECLARE CONTINUE HANDLER FOR v_not_found
+    BEGIN
+        SELECT 'Error: Borrower or Book not found!' AS Message;
+    END;
+
+    -- Get the issue date
+    SELECT DateOfIssue INTO v_date
+    FROM Borrower
+    WHERE Roll_no = p_roll AND NameOfBook = p_book;
+
+    -- Calculate days difference
+    SET v_days = DATEDIFF(CURDATE(), v_date);
+
+    -- Calculate fine based on days
+    IF v_days BETWEEN 15 AND 30 THEN
+        SET v_amt = v_days * 5;
+    ELSEIF v_days > 30 THEN
+        SET v_amt = v_days * 50;
+    ELSE
+        SET v_amt = 0;
+    END IF;
+
+    -- Update status to Returned
+    UPDATE Borrower 
+    SET Status = 'R' 
+    WHERE Roll_no = p_roll AND NameOfBook = p_book;
+
+    -- Insert into Fine table only if fine > 0
+    IF v_amt > 0 THEN
+        INSERT INTO Fine VALUES (p_roll, CURDATE(), v_amt);
+        SELECT CONCAT('Fine of Rs ', v_amt, ' applied for ', v_days, ' days late.') AS Message;
+    ELSE
+        SELECT CONCAT('No fine. Book returned in ', v_days, ' days.') AS Message;
+    END IF;
+
+END$$
+
+DELIMITER ;
+
+
+
+Call the Procedure
+
+CALL proc_Fine(101, 'DBMS');
+CALL proc_Fine(102, 'OS');
+CALL proc_Fine(103, 'CN');
+CALL proc_Fine(104, 'DSA');
+
+Check Results
+SELECT * FROM Borrower;
+SELECT * FROM Fine;
+
+

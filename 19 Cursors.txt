@@ -1,0 +1,84 @@
+ Cursors: (All types: Implicit, Explicit, Cursor FOR Loop, Parameterized Cursor) Write a PL/SQL block of 
+code using parameterized Cursor that will merge the data availablein the newly created table N_RollCall with 
+the data available in the table O_RollCall. If the data in the first table already exist in the second table then that 
+data should be skipped
+
+
+CREATE TABLE O_RollCall (
+    RollNo INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Dept VARCHAR(20)
+);
+
+CREATE TABLE N_RollCall (
+    RollNo INT,
+    Name VARCHAR(50),
+    Dept VARCHAR(20)
+);
+
+
+INSERT INTO O_RollCall VALUES 
+(1, 'Rahul', 'CS'),
+(2, 'Neha', 'IT'),
+(3, 'Amit', 'EE');
+
+INSERT INTO N_RollCall VALUES 
+(2, 'Neha', 'IT'),   -- duplicate (exists in old table)
+(4, 'Chetan', 'CS'),
+(5, 'Sneha', 'ME');
+
+Create Stored Procedure Using Cursor
+
+DELIMITER $$
+
+CREATE PROCEDURE merge_RollCall()
+BEGIN
+    DECLARE done INT DEFAULT 0;
+    DECLARE v_roll INT;
+    DECLARE v_name VARCHAR(50);
+    DECLARE v_dept VARCHAR(20);
+    DECLARE v_exists INT DEFAULT 0;
+
+    -- Cursor to read from new table
+    DECLARE cur CURSOR FOR SELECT RollNo, Name, Dept FROM N_RollCall;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    OPEN cur;
+
+    read_loop: LOOP
+        FETCH cur INTO v_roll, v_name, v_dept;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        -- Check if Roll already exists in old table
+        SELECT COUNT(*) INTO v_exists 
+        FROM O_RollCall 
+        WHERE RollNo = v_roll;
+
+        -- If not exists, insert new record
+        IF v_exists = 0 THEN
+            INSERT INTO O_RollCall VALUES (v_roll, v_name, v_dept);
+            SELECT CONCAT('Inserted RollNo ', v_roll, ' - ', v_name) AS Message;
+        ELSE
+            SELECT CONCAT('Skipped RollNo ', v_roll, ' (already exists)') AS Message;
+        END IF;
+
+    END LOOP;
+
+    CLOSE cur;
+END$$
+
+DELIMITER ;
+
+
+Call the Procedure
+
+CALL merge_RollCall();
+
+Check Final Result
+SELECT * FROM O_RollCall;
+
+
+
+

@@ -1,0 +1,111 @@
+1. Retrieve city, phone, url of author whose name is ‘CHETAN BHAGAT’.
+
+CREATE DATABASE LibraryDB;
+USE LibraryDB;
+
+CREATE TABLE Publisher (
+    PID INT PRIMARY KEY,
+    PName VARCHAR(50),
+    Address VARCHAR(100),
+    State VARCHAR(50),
+    Phone VARCHAR(15),
+    EmailID VARCHAR(50)
+);
+
+CREATE TABLE Book (
+    ISBN INT PRIMARY KEY,
+    Book_Title VARCHAR(100),
+    Category VARCHAR(50),
+    Price DECIMAL(10,2),
+    Copyright_Date YEAR,
+    Year YEAR,
+    Page_Count INT,
+    PID INT,
+    FOREIGN KEY (PID) REFERENCES Publisher(PID)
+);
+
+CREATE TABLE Author (
+    AID INT PRIMARY KEY,
+    AName VARCHAR(50),
+    State VARCHAR(50),
+    City VARCHAR(50),
+    Zip VARCHAR(10),
+    Phone VARCHAR(15),
+    URL VARCHAR(100)
+);
+
+
+-- Publisher table
+INSERT INTO Publisher VALUES
+(1, 'MEHTA', 'Pune', 'Maharashtra', '9876543210', 'mehta@gmail.com'),
+(2, 'TATA', 'Mumbai', 'Maharashtra', '9988776655', 'tata@gmail.com');
+
+-- Book table
+INSERT INTO Book VALUES
+(101, 'Half Girlfriend', 'Fiction', 450, 2015, 2015, 280, 1),
+(102, 'Fundamentals of DBMS', 'Education', 650, 2008, 2008, 500, 2),
+(103, '3 Mistakes of My Life', 'Fiction', 400, 2010, 2010, 300, 1),
+(104, 'Short Stories', 'Fiction', 150, 2012, 2012, 90, 1);
+
+-- Author table
+INSERT INTO Author VALUES
+(201, 'CHETAN BHAGAT', 'Maharashtra', 'Mumbai', '400001', '7777777777', 'www.chetanbhagat.com'),
+(202, 'SILBERSCHATZ KORTH', 'Maharashtra', 'Pune', '411001', '8888888888', 'www.dbbook.com'),
+(203, 'CAMILA FERNANDEZ', 'Maharashtra', 'Pune', '411002', '9999999999', 'www.camila.com');
+
+
+1 Retrieve city, phone, url of author whose name is ‘CHETAN BHAGAT’
+
+SELECT City, Phone, URL
+FROM Author
+WHERE AName = 'CHETAN BHAGAT';
+
+
+2 Retrieve book title, price, author name and url for publisher ‘MEHTA’
+
+SELECT b.Book_Title, b.Price, a.AName, a.URL
+FROM Book b
+JOIN Publisher p ON b.PID = p.PID
+JOIN Author a ON a.AName = 'CHETAN BHAGAT'
+WHERE p.PName = 'MEHTA';
+
+3 In a PUBLISHER relation change the phone number of ‘MEHTA’ to 123456
+
+UPDATE Publisher
+SET Phone = '123456'
+WHERE PName = 'MEHTA';
+
+4 Calculate and display the average, maximum, minimum price of each publisher
+
+SELECT p.PName,
+       AVG(b.Price) AS Avg_Price,
+       MAX(b.Price) AS Max_Price,
+       MIN(b.Price) AS Min_Price
+FROM Publisher p
+JOIN Book b ON p.PID = b.PID
+GROUP BY p.PName;
+
+5 Delete details of all books having a page count less than 100
+
+DELETE FROM Book
+WHERE Page_Count < 100;
+
+6 Retrieve details of all authors residing in city Pune and whose name begins with ‘C’
+
+SELECT *
+FROM Author
+WHERE City = 'Pune' AND AName LIKE 'C%';
+
+7 Retrieve details of authors residing in same city as ‘Korth'
+
+SELECT *
+FROM Author
+WHERE City = (
+    SELECT City FROM Author WHERE AName LIKE '%Korth%'
+);
+
+8 Find books with a copyright date before 2010
+
+SELECT *
+FROM Book
+WHERE Copyright_Date < 2010;

@@ -1,0 +1,91 @@
+Write a Stored Procedure namely proc_Grade for the categorization of student. If marks scoredby students in 
+examination is <=1500 and marks>=990 then student will be placed in distinction category if marks scored are 
+between 989 and 900 category is first class, if marks 899 and 825 category is Higher Second Class. Write a 
+PL/SQL block to use procedure created with above requirement. Stud_Marks(name, total_marks) 
+Result(Roll,Name, Class)
+
+
+
+
+CREATE TABLE Stud_Marks (
+    Roll INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Total_Marks INT
+);
+
+CREATE TABLE Result (
+    Roll INT,
+    Name VARCHAR(50),
+    Class VARCHAR(30)
+);
+
+INSERT INTO Stud_Marks VALUES 
+(1, 'Rahul', 1200),
+(2, 'Neha', 950),
+(3, 'Amit', 880),
+(4, 'Chetan', 830),
+(5, 'Sneha', 1450);
+
+
+Create Stored Procedure
+
+DELIMITER $$
+
+CREATE PROCEDURE proc_Grade(IN p_roll INT, IN p_name VARCHAR(50), IN p_marks INT)
+BEGIN
+    DECLARE v_class VARCHAR(30);
+
+    IF p_marks BETWEEN 990 AND 1500 THEN
+        SET v_class = 'Distinction';
+    ELSEIF p_marks BETWEEN 900 AND 989 THEN
+        SET v_class = 'First Class';
+    ELSEIF p_marks BETWEEN 825 AND 899 THEN
+        SET v_class = 'Higher Second Class';
+    ELSE
+        SET v_class = 'Fail';
+    END IF;
+
+    INSERT INTO Result VALUES (p_roll, p_name, v_class);
+
+    SELECT CONCAT('Student: ', p_name, ' | Marks: ', p_marks, ' | Category: ', v_class) AS Result;
+END$$
+
+DELIMITER ;
+
+MySQL Block to Call Procedure for All Students
+
+DELIMITER $$
+
+CREATE PROCEDURE proc_Grade_All()
+BEGIN
+    DECLARE done INT DEFAULT 0;
+    DECLARE v_roll INT;
+    DECLARE v_name VARCHAR(50);
+    DECLARE v_marks INT;
+
+    DECLARE cur CURSOR FOR SELECT Roll, Name, Total_Marks FROM Stud_Marks;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = 1;
+
+    OPEN cur;
+    read_loop: LOOP
+        FETCH cur INTO v_roll, v_name, v_marks;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+
+        CALL proc_Grade(v_roll, v_name, v_marks);
+    END LOOP;
+    CLOSE cur;
+END$$
+
+DELIMITER ;
+
+Run the Procedure
+
+CALL proc_Grade_All();
+
+View Final Results
+
+SELECT * FROM Result;
+
+

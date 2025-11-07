@@ -1,0 +1,107 @@
+
+ Design and Develop SQL DDL statements which demonstrate the use of SQL objects such as Table, View, 
+Index, Sequence, Synonym, different constraints etc. 
+1. Create tables Emp and dept with constraints(Primary key, Foreign key etc)
+ 2. create views on any two tables using conditions.(with types of views)
+ 3. Insert, Update and delete values from views
+ 3. Create index called EmployeeId for the deptment table. Entries should be in ascending order by department 
+id and then by  employee id within each department.
+ 4. Create sequence on Employee id.
+ 5. Delete index.
+
+
+CREATE DATABASE CompanyDB;
+USE CompanyDB;
+
+2.1 Create Dept table
+CREATE TABLE Dept (
+    DeptID INT PRIMARY KEY,
+    DeptName VARCHAR(50) NOT NULL,
+    Location VARCHAR(50)
+);
+
+INSERT INTO Dept (DeptID, DeptName) VALUES
+(1, 'IT'),
+(2, 'HR'),
+(3, 'Finance'),
+(4, 'Sales');
+  
+
+2.2 Create Emp table
+CREATE TABLE Emp (
+    EmpID INT PRIMARY KEY,
+    EmpName VARCHAR(50) NOT NULL,
+    Salary DECIMAL(10,2),
+    DeptID INT,
+   FOREIGN KEY (deptid) REFERENCES dept(deptid)
+);
+
+INSERT INTO Emp (EmpID, EmpName, EmpAge, DeptID) VALUES
+(101, 'Amit Sharma', 35, 1),   
+(102, 'Ravi Kumar', 28, 1),    
+(103, 'Sita Verma', 32, 2),    
+(104, 'John Paul', 29, 3),     
+(105, 'Neha Singh', 41, 4);  
+
+2. Create Views (with conditions)
+(a) View to show Employees above age 30:
+
+CREATE VIEW EmpAbove30 AS
+SELECT EmpID, EmpName, EmpAge, DeptID
+FROM Emp
+WHERE EmpAge > 30;
+
+
+check 
+SHOW FULL TABLES WHERE Table_type = 'EmpAbove30';
+
+SELECT * FROM EmpAbove30;
+
+3. Insert, Update, Delete values from Views
+Insert into Emp using view:
+
+INSERT INTO EmpAbove30 (EmpID, EmpName, EmpAge, DeptID)
+VALUES (101, 'Amit Sharma', 35, 1);
+
+Update using view:
+UPDATE EmpAbove30
+SET EmpAge = 40
+WHERE EmpID = 101;
+
+Delete using view:
+DELETE FROM EmpAbove30
+WHERE EmpID = 101;
+
+
+4. Create Index (EmployeeId) on Dept Table
+
+CREATE INDEX EmployeeId
+ON Emp (DeptID ASC, EmpID ASC);
+
+5. Create Sequence on Employee ID
+CREATE SEQUENCE EmpID_Seq
+START WITH 1
+INCREMENT BY 1;
+
+INSERT INTO Emp (EmpID, EmpName, EmpAge, DeptID)
+VALUES (NEXT VALUE FOR EmpID_Seq, 'Ravi Kumar', 28, 1);
+
+6. Delete Index
+
+DROP INDEX EmployeeId ON Emp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,113 @@
+Create the following tables:
+ Orders(Order_no, cust, product, Quantity, amount, Disc) 
+Customers(Cust_No, Company, Cust_Rep, Credit_Limit) 
+Sales_Representative (Rep_no,Name, Re_office,Quota, sales) 
+Orders (cust –foreign key for cust_no from Customer )
+ Customers(Cust_Rep foreign key for Rep_no from Sales_Representative )
+
+
+CREATE DATABASE SalesDB;
+USE SalesDB;
+
+
+CREATE TABLE Sales_Representative(
+    Rep_no INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Re_office VARCHAR(50),
+    Quota DECIMAL(10,2),
+    Sales DECIMAL(10,2)
+);
+
+CREATE TABLE Customers(
+    Cust_No INT PRIMARY KEY,
+    Company VARCHAR(50),
+    Cust_Rep INT,
+    Credit_Limit DECIMAL(10,2),
+    FOREIGN KEY (Cust_Rep) REFERENCES Sales_Representative(Rep_no)
+);
+
+CREATE TABLE Orders(
+    Order_no INT PRIMARY KEY,
+    Cust INT,
+    Product VARCHAR(50),
+    Quantity INT,
+    Amount DECIMAL(10,2),
+    Disc DECIMAL(5,2),
+    FOREIGN KEY (Cust) REFERENCES Customers(Cust_No)
+);
+
+-- Sales Representatives
+INSERT INTO Sales_Representative VALUES
+(101,'John Smith','NY',50000,30000),
+(102,'Jane Doe','LA',40000,25000),
+(103,'Mike Ross','NY',45000,20000);
+
+-- Customers
+INSERT INTO Customers VALUES
+(201,'TechCorp',101,20000),
+(202,'SoftSolutions',102,15000),
+(203,'BizSoft',103,25000);
+
+-- Orders
+INSERT INTO Orders VALUES
+(301,201,'Software',10,15000,5),
+(302,201,'Hardware',5,8000,0),
+(303,202,'Software',15,18000,10),
+(304,203,'Software',8,12000,5),
+(305,203,'Hardware',3,5000,0);
+
+
+1. For each customer: customer name, credit limit, rep name, and rep sales
+
+SELECT c.Company AS CustomerName,
+       c.Credit_Limit,
+       s.Name AS RepName,
+       s.Sales AS RepSales
+FROM Customers c
+JOIN Sales_Representative s ON c.Cust_Rep = s.Rep_no;
+
+2. List all orders: order number, amount, customer name, credit limit
+
+SELECT o.Order_no, o.Amount,
+       c.Company AS CustomerName,
+       c.Credit_Limit
+FROM Orders o
+JOIN Customers c ON o.Cust = c.Cust_No;
+
+
+3. Product-wise sale amount > $12,000
+SELECT Product, SUM(Amount) AS TotalSale
+FROM Orders
+GROUP BY Product
+HAVING SUM(Amount) > 12000;
+
+
+4. Names of customers and representatives involved in sale of 'Software'
+SELECT DISTINCT o.Product, c.Company AS CustomerName, s.Name AS RepName
+FROM Orders o
+JOIN Customers c ON o.Cust = c.Cust_No
+JOIN Sales_Representative s ON c.Cust_Rep = s.Rep_no
+WHERE o.Product = 'Software';
+
+5. Credit limit and discount received by company
+SELECT c.Company AS CustomerName,
+       c.Credit_Limit,
+       SUM(o.Disc) AS TotalDiscount
+FROM Customers c
+JOIN Orders o ON c.Cust_No = o.Cust
+GROUP BY c.Company, c.Credit_Limit;
+
+6. Sales representatives who work in the same office
+SELECT s1.Name AS Rep1, s2.Name AS Rep2, s1.Re_office
+FROM Sales_Representative s1
+JOIN Sales_Representative s2 
+  ON s1.Re_office = s2.Re_office
+ AND s1.Rep_no < s2.Rep_no;
+
+
+
+
+
+
+
+

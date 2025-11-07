@@ -1,0 +1,78 @@
+ Database Trigger (All Types: Row level and Statement level triggers, Before and After Triggers). 
+Write a database trigger on Library table. The System should keep track of the records that are being updated 
+or deleted. The old value of updated or deleted records should be added in Library_Audit table.
+
+1 Create Main Table: Library
+
+CREATE TABLE Library (
+    BookID INT PRIMARY KEY,
+    BookName VARCHAR(100),
+    Author VARCHAR(50),
+    Price DECIMAL(10,2)
+);
+
+2 Create Audit Table: Library_Audit
+
+CREATE TABLE Library_Audit (
+    AuditID INT AUTO_INCREMENT PRIMARY KEY,
+    BookID INT,
+    BookName VARCHAR(100),
+    Author VARCHAR(50),
+    Price DECIMAL(10,2),
+    Action_Type VARCHAR(20),
+    Action_Time TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+3 Insert Some Sample Data
+
+INSERT INTO Library VALUES
+(1, 'MySQL Basics', 'John Smith', 500.00),
+(2, 'Python Programming', 'Alice Brown', 650.00),
+(3, 'DBMS Concepts', 'Chetan Bhagat', 750.00);
+
+4 Create Trigger for UPDATE Operation
+
+DELIMITER $$
+
+CREATE TRIGGER before_library_update
+BEFORE UPDATE ON Library
+FOR EACH ROW
+BEGIN
+    INSERT INTO Library_Audit (BookID, BookName, Author, Price, Action_Type)
+    VALUES (OLD.BookID, OLD.BookName, OLD.Author, OLD.Price, 'UPDATE');
+END$$
+
+DELIMITER ;
+
+5 Create Trigger for DELETE Operation
+
+DELIMITER $$
+
+CREATE TRIGGER before_library_delete
+BEFORE DELETE ON Library
+FOR EACH ROW
+BEGIN
+    INSERT INTO Library_Audit (BookID, BookName, Author, Price, Action_Type)
+    VALUES (OLD.BookID, OLD.BookName, OLD.Author, OLD.Price, 'DELETE');
+END$$
+
+DELIMITER ;
+
+6 Test the Triggers
+UPDATE Library
+SET Price = 900.00
+WHERE BookID = 3;
+
+
+7 View Results
+Check Main Table
+SELECT * FROM Library;
+
+Check Audit Table
+SELECT * FROM Library_Audit;
+
+
+
+
+
+

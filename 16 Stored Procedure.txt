@@ -1,0 +1,69 @@
+Write a Stored Procedure namely proc_Grade for the categorization of student. If marks scored by students in 
+examination is <=1500 and marks>=990 then student will be placed in distinction category if marks scored are 
+between 989 and 900 category is first class, if marks 899 and 825 category is Higher Second Class
+
+
+CREATE DATABASE student_result;
+USE student_result;
+
+CREATE TABLE Stud_Marks (
+    RollNo INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Total_Marks INT
+);
+
+CREATE TABLE Result (
+    RollNo INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Class VARCHAR(30)
+);
+
+
+INSERT INTO Stud_Marks VALUES
+(1, 'Amit', 1200),
+(2, 'Sneha', 950),
+(3, 'Rahul', 870),
+(4, 'Priya', 800);
+
+Create the Stored Procedure
+
+DELIMITER $$
+
+CREATE PROCEDURE proc_Grade(IN roll INT)
+BEGIN
+    DECLARE sname VARCHAR(50);
+    DECLARE marks INT;
+    DECLARE grade VARCHAR(30);
+
+    -- Fetch student name and marks
+    SELECT Name, Total_Marks INTO sname, marks
+    FROM Stud_Marks
+    WHERE RollNo = roll;
+
+    -- Determine grade
+    IF marks BETWEEN 990 AND 1500 THEN
+        SET grade = 'Distinction';
+    ELSEIF marks BETWEEN 900 AND 989 THEN
+        SET grade = 'First Class';
+    ELSEIF marks BETWEEN 825 AND 899 THEN
+        SET grade = 'Higher Second Class';
+    ELSE
+        SET grade = 'Fail';
+    END IF;
+
+    -- Insert into Result table
+    INSERT INTO Result VALUES (roll, sname, grade);
+END$$
+
+DELIMITER ;
+
+Call the Procedure
+
+CALL proc_Grade(1);
+CALL proc_Grade(2);
+CALL proc_Grade(3);
+CALL proc_Grade(4);
+
+View the Results
+
+SELECT * FROM Result;

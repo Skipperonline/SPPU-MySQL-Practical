@@ -1,0 +1,111 @@
+SQL Queries - all types of Join, Sub-Query and View: (Note: also examiner can ask it without join)
+ Create the tables Employee(EmpID, Ename, Salary, Contactno, City, DeptID) and 
+Department (DeptID, Dname, Location)
+
+
+CREATE TABLE Department (
+    DeptID INT PRIMARY KEY,
+    Dname VARCHAR(50),
+    Location VARCHAR(50)
+);
+
+CREATE TABLE Employee (
+    EmpID INT PRIMARY KEY,
+    Ename VARCHAR(50),
+    Salary DECIMAL(10,2),
+    ContactNo VARCHAR(15),
+    City VARCHAR(50),
+    DeptID INT,
+    FOREIGN KEY (DeptID) REFERENCES Department(DeptID)
+);
+
+INSERT INTO Department VALUES
+(101, 'HR', 'Pune'),
+(102, 'IT', 'Mumbai'),
+(103, 'Finance', 'Delhi'),
+(104, 'Sales', 'Bangalore');
+
+INSERT INTO Employee VALUES
+(1, 'Amit', 45000, '9876543210', 'Pune', 101),
+(2, 'Priya', 55000, '8765432109', 'Mumbai', 102),
+(3, 'Rohan', 40000, '7654321098', 'Delhi', 103),
+(4, 'Sakshi', 60000, '6543210987', 'Pune', 102),
+(5, 'Vikas', 50000, '5432109876', 'Bangalore', 104);
+
+1 Display Employee Name and Department Name
+SELECT E.Ename, D.Dname
+FROM Employee E
+JOIN Department D ON E.DeptID = D.DeptID;
+
+2 Retrieve employees with their department name and location (INNER JOIN)
+
+SELECT E.Ename, D.Dname, D.Location
+FROM Employee E
+INNER JOIN Department D ON E.DeptID = D.DeptID;
+
+3 Display employee names, location, and department name (NATURAL JOIN)
+
+SELECT Ename, Dname, Location
+FROM Employee
+NATURAL JOIN Department;
+
+4 RIGHT JOIN — All departments with employee info (even if no employee)
+
+SELECT E.Ename, E.Salary, D.Location, D.Dname
+FROM Employee E
+RIGHT JOIN Department D ON E.DeptID = D.DeptID;
+
+5 FULL JOIN (MySQL doesn’t support directly — use UNION of LEFT + RIGHT)
+
+SELECT E.Ename, D.Dname, D.Location
+FROM Employee E
+LEFT JOIN Department D ON E.DeptID = D.DeptID
+UNION
+SELECT E.Ename, D.Dname, D.Location
+FROM Employee E
+RIGHT JOIN Department D ON E.DeptID = D.DeptID;
+
+6 CROSS JOIN — all combinations of employees and departments
+
+SELECT E.Ename, D.Dname
+FROM Employee E
+CROSS JOIN Department D;
+
+7 SELF JOIN — employees who share the same department
+
+SELECT A.Ename AS Employee1, B.Ename AS Employee2, A.DeptID
+FROM Employee A
+JOIN Employee B ON A.DeptID = B.DeptID
+WHERE A.EmpID < B.EmpID;
+
+8 Create Simple and Complex Views
+Simple View:
+CREATE VIEW Emp_View AS
+SELECT Ename, Salary, DeptID
+FROM Employee;
+
+Complex View:
+CREATE VIEW Emp_Dept_View AS
+SELECT E.Ename, E.Salary, D.Dname, D.Location
+FROM Employee E
+JOIN Department D ON E.DeptID = D.DeptID;
+
+9 Update Simple View
+
+UPDATE Emp_View
+SET Salary = 48000
+WHERE Ename = 'Amit';
+
+10 Delete the View
+
+DROP VIEW Emp_Dept_View;
+
+
+
+
+
+
+
+
+
+

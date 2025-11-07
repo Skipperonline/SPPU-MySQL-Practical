@@ -1,0 +1,98 @@
+Create a db called company consist of the following tables. 
+1.Emp (eno,ename, job,hiredate,salary,commission,deptno,) 
+2.dept(deptno,deptname,location) 
+eno is primary key in emp 
+deptno is primary key in dept
+
+
+CREATE DATABASE company;
+USE company;
+
+
+CREATE TABLE Dept(
+    deptno INT PRIMARY KEY,
+    deptname VARCHAR(30),
+    location VARCHAR(30)
+);
+
+CREATE TABLE Emp(
+    eno INT PRIMARY KEY,
+    ename VARCHAR(30),
+    job VARCHAR(20),
+    hiredate DATE,
+    salary DECIMAL(10,2),
+    commission DECIMAL(10,2),
+    deptno INT,
+    FOREIGN KEY (deptno) REFERENCES Dept(deptno)
+);
+
+INSERT INTO Dept VALUES
+(10,'Dev','Pune'),
+(20,'HR','Mumbai'),
+(30,'Sales','Delhi');
+
+INSERT INTO Emp VALUES
+(101,'Amit','Manager','1981-06-09',5000,NULL,10),
+(102,'Isha','Clerk','1983-01-12',1500,NULL,20),
+(103,'Indra','Salesman','1981-02-20',1600,300,30),
+(104,'Ravi','Salesman','1981-09-28',1250,500,30),
+(105,'Neha','Analyst','1982-12-09',3000,NULL,10),
+(106,'John','Clerk','1984-05-01',1800,NULL,20);
+
+1. Maximum salary paid to Salesman
+SELECT MAX(salary) AS MaxSalesmanSalary
+FROM Emp
+WHERE job = 'Salesman';
+
+2. Employees whose name starts with ‘I’
+SELECT *
+FROM Emp
+WHERE ename LIKE 'I%';
+
+3. Employees joined before ’30-SEP-81’
+SELECT *
+FROM Emp
+WHERE hiredate < '1981-09-30';
+
+4. Employee details in descending order of salary
+SELECT *
+FROM Emp
+ORDER BY salary DESC;
+
+5. No. of employees & average salary in deptno 20
+SELECT COUNT(*) AS NumEmp, AVG(salary) AS AvgSalary
+FROM Emp
+WHERE deptno = 20;
+
+
+6. Average & minimum salary hiredate-wise for deptno 10
+SELECT hiredate, AVG(salary) AS AvgSalary, MIN(salary) AS MinSalary
+FROM Emp
+WHERE deptno = 10
+GROUP BY hiredate;
+
+
+7. Employee name and its department
+SELECT e.ename, d.deptname
+FROM Emp e
+JOIN Dept d ON e.deptno = d.deptno;
+
+8. Total salary paid to each department
+SELECT deptno, SUM(salary) AS TotalSalary
+FROM Emp
+GROUP BY deptno;
+
+9. Details of employees working in ‘Dev’ department
+SELECT e.*
+FROM Emp e
+JOIN Dept d ON e.deptno = d.deptno
+WHERE d.deptname = 'Dev';
+
+10. Update salary of all employees in deptno 10 by 5%
+UPDATE Emp
+SET salary = salary * 1.05
+WHERE deptno = 10;
+
+
+
+

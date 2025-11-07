@@ -1,0 +1,117 @@
+3. Find the products which have been sold to TCS.
+
+
+CREATE DATABASE CompanyDB;
+USE CompanyDB;
+
+
+CREATE TABLE Sales_Representative (
+    Rep_no INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Re_office VARCHAR(50),
+    Quota DECIMAL(10,2),
+    Sales DECIMAL(10,2)
+);
+
+CREATE TABLE Customers (
+    Cust_No INT PRIMARY KEY,
+    Company VARCHAR(50),
+    Cust_Rep INT,
+    Credit_Limit DECIMAL(10,2),
+    FOREIGN KEY (Cust_Rep) REFERENCES Sales_Representative(Rep_no)
+);
+
+CREATE TABLE Orders (
+    Order_no INT PRIMARY KEY,
+    Cust INT,
+    Product VARCHAR(50),
+    Quantity INT,
+    Amount DECIMAL(10,2),
+    Disc DECIMAL(5,2),
+    FOREIGN KEY (Cust) REFERENCES Customers(Cust_No)
+);
+
+
+-- Sales Representatives
+INSERT INTO Sales_Representative VALUES
+(101, 'John Smith', 'NY', 50000, 30000),
+(102, 'Jane Doe', 'LA', 45000, 28000),
+(103, 'Mike Ross', 'NY', 60000, 40000);
+
+-- Customers
+INSERT INTO Customers VALUES
+(201, 'Infosys', 101, 20000),
+(202, 'TCS', 102, 25000),
+(203, 'Wipro', 103, 30000);
+
+-- Orders
+INSERT INTO Orders VALUES
+(301, 201, 'Software', 10, 15000, 5),
+(302, 202, 'Hardware', 8, 28000, 10),
+(303, 202, 'Software', 5, 32000, 15),
+(304, 203, 'Laptop', 4, 12000, 0),
+(305, 201, 'Keyboard', 20, 26000, 8);
+
+
+1 List for each customer: customer name, their rep’s name, their rep’s office
+
+SELECT c.Company AS CustomerName,
+       s.Name AS RepName,
+       s.Re_office AS RepOffice
+FROM Customers c
+JOIN Sales_Representative s ON c.Cust_Rep = s.Rep_no;
+
+2 List orders over $25,000 with salesperson and customer name
+
+SELECT o.Order_no, o.Amount, 
+       c.Company AS CustomerName,
+       s.Name AS SalesPerson
+FROM Orders o
+JOIN Customers c ON o.Cust = c.Cust_No
+JOIN Sales_Representative s ON c.Cust_Rep = s.Rep_no
+WHERE o.Amount > 25000;
+
+3 Find the products which have been sold to 'TCS'
+
+SELECT o.Product
+FROM Orders o
+JOIN Customers c ON o.Cust = c.Cust_No
+WHERE c.Company = 'TCS';
+
+4 Find company which has been offered maximum discount
+
+SELECT c.Company, MAX(o.Disc) AS Max_Discount
+FROM Customers c
+JOIN Orders o ON c.Cust_No = o.Cust
+GROUP BY c.Company
+ORDER BY Max_Discount DESC
+LIMIT 1;
+
+5 Find the sales representatives who work in the same office
+
+SELECT s1.Name AS Rep1, s2.Name AS Rep2, s1.Re_office
+FROM Sales_Representative s1
+JOIN Sales_Representative s2
+  ON s1.Re_office = s2.Re_office
+ AND s1.Rep_no < s2.Rep_no;
+
+
+6 Find the credit limit of company and the total discount it has received
+
+SELECT c.Company, 
+       c.Credit_Limit,
+       SUM(o.Disc) AS Total_Discount
+FROM Customers c
+JOIN Orders o ON c.Cust_No = o.Cust
+GROUP BY c.Company, c.Credit_Limit;
+
+
+
+
+
+
+
+
+
+
+

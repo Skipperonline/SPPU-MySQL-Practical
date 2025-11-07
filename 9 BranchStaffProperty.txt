@@ -1,0 +1,102 @@
+2 Update lname of staff with staffno S106 to ‘Shinde’
+
+
+CREATE DATABASE propertydealers;
+USE propertydealers;
+
+
+CREATE TABLE Branch(
+    branchno VARCHAR(10) PRIMARY KEY,
+    street VARCHAR(50),
+    city VARCHAR(30),
+    postcode VARCHAR(10)
+);
+
+CREATE TABLE Staff(
+    staffno VARCHAR(10) PRIMARY KEY,
+    fname VARCHAR(30),
+    lname VARCHAR(30),
+    position VARCHAR(20),
+    sex CHAR(1),
+    dob DATE,
+    salary DECIMAL(10,2),
+    branchno VARCHAR(10),
+    FOREIGN KEY (branchno) REFERENCES Branch(branchno)
+);
+
+CREATE TABLE PropertyForRent(
+    propertyNo VARCHAR(10) PRIMARY KEY,
+    street VARCHAR(50),
+    city VARCHAR(30),
+    postcode VARCHAR(10),
+    type VARCHAR(20),
+    rooms INT,
+    rent DECIMAL(10,2),
+    staffno VARCHAR(10),
+    branchno VARCHAR(10),
+    FOREIGN KEY (staffno) REFERENCES Staff(staffno),
+    FOREIGN KEY (branchno) REFERENCES Branch(branchno)
+);
+
+1
+-- Branches
+INSERT INTO Branch VALUES
+('B001','FC Road','Pune','411005'),
+('B002','MG Road','Pune','411041'),
+('B003','Linking Road','Mumbai','400050');
+
+-- Staff
+INSERT INTO Staff VALUES
+('S101','Amit','Patil','Manager','M','1985-03-12',60000,'B001'),
+('S102','Neha','Kulkarni','Clerk','F','1990-07-22',35000,'B001'),
+('S103','Sagar','Sharma','Manager','M','1982-01-15',70000,'B002'),
+('S104','Anita','Rao','Sales','F','1993-10-05',30000,'B002'),
+('S105','Karan','Mane','Sales','M','1989-06-18',32000,'B003'),
+('S106','Ravi','Deshmukh','Manager','M','1980-11-09',80000,'B003');
+
+-- Properties
+INSERT INTO PropertyForRent VALUES
+('P1001','JM Road','Pune','411005','Flat',3,20000,'S101','B001'),
+('P1002','FC Road','Pune','411005','House',4,35000,'S102','B001'),
+('P2001','MG Road','Pune','411041','Flat',2,15000,'S103','B002'),
+('P2002','Camp','Pune','411041','Flat',3,18000,'S104','B002'),
+('P3001','Bandra','Mumbai','400050','Flat',2,25000,'S105','B003'),
+('P3002','Andheri','Mumbai','400050','House',5,60000,'S106','B003');
+
+2. Update lname of staff with staffno S106 to ‘Shinde’
+UPDATE Staff
+SET lname = 'Shinde'
+WHERE staffno = 'S106';
+
+3. Delete the branch with postcode 411041
+DELETE FROM Branch WHERE postcode = '411041';
+
+4. List employees who have at least 2 ‘A’s in their name
+SELECT *
+FROM Staff
+WHERE CONCAT(fname, lname) LIKE '%A%A%';
+
+
+5. Maximum salary from each branch, highest to lowest
+SELECT branchno, MAX(salary) AS MaxSalary
+FROM Staff
+GROUP BY branchno
+ORDER BY MaxSalary DESC;
+
+
+6. List all properties managed by staff with id S123
+SELECT*FROM PropertyForRent
+WHERE staffno = 'S123';
+
+
+7. Average rent of properties in Pune
+SELECT AVG(rent) AS AvgRentPune
+FROM PropertyForRent
+WHERE city = 'Pune';
+
+8. Number of properties managed by each branch
+SELECT branchno, COUNT(*) AS PropertyCount
+FROM PropertyForRent
+GROUP BY branchno;
+
+

@@ -1,0 +1,92 @@
+
+Install Required Library
+pip install pymongo
+
+Start MongoDB
+mongodb://localhost:27017/
+
+
+Python Program — mongo_connect.py
+from pymongo import MongoClient
+
+# Step 1: Connect to MongoDB
+client = MongoClient("mongodb://localhost:27017/")
+
+# Step 2: Create or connect to database and collection
+db = client["student_db"]
+collection = db["students"]
+
+def add_student():
+    roll = int(input("Enter Roll No: "))
+    name = input("Enter Name: ")
+    age = int(input("Enter Age: "))
+    city = input("Enter City: ")
+    
+    student = {"RollNo": roll, "Name": name, "Age": age, "City": city}
+    collection.insert_one(student)
+    print("✅ Student added successfully.\n")
+
+def view_students():
+    print("\n--- Student Records ---")
+    for student in collection.find():
+        print(student)
+    print()
+
+def update_student():
+    roll = int(input("Enter Roll No to update: "))
+    new_city = input("Enter new City: ")
+    result = collection.update_one({"RollNo": roll}, {"$set": {"City": new_city}})
+    if result.modified_count > 0:
+        print("✅ Student record updated.\n")
+    else:
+        print("❌ Roll No not found.\n")
+
+def delete_student():
+    roll = int(input("Enter Roll No to delete: "))
+    result = collection.delete_one({"RollNo": roll})
+    if result.deleted_count > 0:
+        print("🗑️ Student deleted successfully.\n")
+    else:
+        print("❌ Roll No not found.\n")
+
+# Menu-driven program
+while True:
+    print("===== STUDENT DATABASE MENU =====")
+    print("1. Add Student")
+    print("2. View Students")
+    print("3. Update Student")
+    print("4. Delete Student")
+    print("5. Exit")
+
+    choice = input("Enter your choice: ")
+
+    if choice == '1':
+        add_student()
+    elif choice == '2':
+        view_students()
+    elif choice == '3':
+        update_student()
+    elif choice == '4':
+        delete_student()
+    elif choice == '5':
+        print("👋 Exiting Program.")
+        break
+    else:
+        print("Invalid choice! Try again.\n")
+
+
+
+Run the Program
+python mongo_connect.py
+
+
+Verify in MongoDB Shell
+
+use student_db
+db.students.find().pretty()
+
+
+
+
+
+

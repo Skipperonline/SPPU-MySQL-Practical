@@ -1,0 +1,107 @@
+ Database Connectivity: Write a program to implement MySQL/Oracle database connectivity with any front 
+end language to implement Database navigation operations (add, delete, edit etc.)
+
+CREATE DATABASE student_db;
+USE student_db;
+
+
+Install MySQL Connector for Python
+pip install mysql-connector-python
+
+
+
+Create a MySQL Database and Table
+CREATE TABLE Student (
+    RollNo INT PRIMARY KEY,
+    Name VARCHAR(50),
+    Age INT,
+    City VARCHAR(50)
+);
+
+INSERT INTO Student (RollNo, Name, Age, City) VALUES
+(101, 'Amit', 20, 'Pune'),
+(102, 'Priya', 21, 'Mumbai'),
+(103, 'Rohan', 22, 'Delhi'),
+(104, 'Sakshi', 20, 'Nagpur'),
+(105, 'Vikas', 23, 'Bangalore');
+
+
+Python Program (Front-end)
+
+Save this as student_db_connect.py
+
+import mysql.connector
+
+# Step 1: Connect to MySQL database
+con = mysql.connector.connect(
+    host="localhost",
+    user="root",
+    password="your_password",   # 🔹 Replace with your MySQL root password
+    database="student_db"
+)
+
+cursor = con.cursor()
+
+def add_student():
+    roll = int(input("Enter Roll No: "))
+    name = input("Enter Name: ")
+    age = int(input("Enter Age: "))
+    city = input("Enter City: ")
+    cursor.execute("INSERT INTO Student VALUES (%s, %s, %s, %s)", (roll, name, age, city))
+    con.commit()
+    print("✅ Student added successfully.\n")
+
+def view_students():
+    cursor.execute("SELECT * FROM Student")
+    rows = cursor.fetchall()
+    print("\n--- Student Records ---")
+    for row in rows:
+        print(row)
+    print()
+
+def update_student():
+    roll = int(input("Enter Roll No to update: "))
+    new_city = input("Enter new City: ")
+    cursor.execute("UPDATE Student SET City=%s WHERE RollNo=%s", (new_city, roll))
+    con.commit()
+    print("✅ Student record updated.\n")
+
+def delete_student():
+    roll = int(input("Enter Roll No to delete: "))
+    cursor.execute("DELETE FROM Student WHERE RollNo=%s", (roll,))
+    con.commit()
+    print("🗑️ Student deleted successfully.\n")
+
+# Menu-driven program
+while True:
+    print("===== STUDENT DATABASE MENU =====")
+    print("1. Add Student")
+    print("2. View Students")
+    print("3. Update Student")
+    print("4. Delete Student")
+    print("5. Exit")
+
+    choice = input("Enter your choice: ")
+
+    if choice == '1':
+        add_student()
+    elif choice == '2':
+        view_students()
+    elif choice == '3':
+        update_student()
+    elif choice == '4':
+        delete_student()
+    elif choice == '5':
+        print("👋 Exiting Program.")
+        break
+    else:
+        print("Invalid choice! Try again.\n")
+
+# Step 6: Close the connection
+cursor.close()
+con.close()
+
+
+Run the Program
+
+python student_db_connect.py
