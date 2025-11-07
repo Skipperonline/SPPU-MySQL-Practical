@@ -1,5 +1,7 @@
+
 use university 
 
+1. Insert entry of 10 or more students.
 db.student.insertMany([
   { first_name:"Swaraj", last_name:"Bidkar", gender:"male", class:"TE A", age:20, city:"Bangalore", grd_point:35, course:"BTech"},
   { first_name:"Bhakti", last_name:"Patel", gender:"female", class:"TE B", age:21, city:"Pune", grd_point:30, course:"BTech"},
@@ -14,7 +16,7 @@ db.student.insertMany([
 ])
 
 
-Find male students from “TE A” OR with grade ≥ 31
+2. Find male students from “TE A” OR with grade ≥ 31
 db.student.find({
   $or: [
     { $and: [ { gender: "male" }, { class: "TE A" } ] },
@@ -23,30 +25,30 @@ db.student.find({
 }).pretty()
 
 
-Find students from Bangalore aged ≤ 19
+3. Find students from Bangalore aged ≤ 19
 db.student.find({ city: "Bangalore", age: { $lte: 19 } }).pretty()
 
 
-Update course to “MCA” where first name = “Bhakti”
+4. Update course to “MCA” where first name = “Bhakti”
 db.student.updateMany({ first_name: "Bhakti" }, { $set: { course: "MCA" } })
 # verify
 db.student.find({ first_name: "Bhakti" }).pretty()
 
 
-Delete male students aged 18
+5. Delete male students aged 18
 db.student.deleteMany({ age: 18, gender: "male" })
 # verify
 db.student.find({ age: 18, gender: "male" }).count()  
 
 
-Delete student where last name = “Jadhav” and class = “TE B”
+6. Delete student where last name = “Jadhav” and class = “TE B”
 db.student.deleteMany({ last_name: "Jadhav", class: "TE B" })
 # verify
 db.student.find({ last_name: "Jadhav", class: "TE B" }).count()
 
 
 
-Example using $nor and arithmetic operator
+7. Example using $nor and arithmetic operator
 db.student.find({
   $nor: [
     { class: "TE B" },
@@ -55,8 +57,9 @@ db.student.find({
 }).pretty()
 
 
-Using save() method
+8. Using save() method
 db.student.save({ first_name:"New", last_name:"Student", gender:"male", class:"TE A", age:18, city:"Bangalore", grd_point:20 })
+
 
 
 
